@@ -1,0 +1,96 @@
+#toasts {
+    position: fixed;
+    z-index: 950;
+    bottom: 5px;
+    right: 10px;
+    pointer-events: none;
+
+    .toast {
+        position: relative;
+        background-color: rgba(0, 0, 0, 0.85);
+        border-radius: 3px;
+        margin-bottom: 5px;
+        padding: 10px 30px 10px 15px;
+        min-width: 300px;
+        max-width: 400px;
+        color: #fff;
+        font-size: 0.9em;
+        pointer-events: all;
+        transition: all .2s linear;
+        overflow: hidden;
+        opacity: 0;
+
+        >div {
+            position: relative;
+            padding-left: 25px;
+
+            &:before {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 40px;
+                font-family: "icomoon";
+            }
+        }
+
+        &.error {
+            border-left: solid 5px rgb(214, 69, 65);
+
+            >div:before {
+                content: "\e900";
+            }
+        }
+
+        &.success {
+            border-left: solid 5px rgb(22, 160, 133);
+
+            >div:before {
+                content: "\e902";
+            }
+        }
+
+        &.info {
+            border-left: solid 5px rgb(30, 139, 195);
+
+            >div:before {
+                content: "\e916";
+            }
+        }
+
+        .toast-dismiss {
+            position: absolute;
+            top: 0;
+            right: 0;
+            font-size: 13px;
+            line-height: 22px;
+            text-align: center;
+            color: rgb(255, 255, 255);
+            font-family: "icomoon";
+            width: 23px;
+            height: 23px;
+            overflow: none;
+            padding-left: 1px;
+            opacity: 0.3;
+            display: none;
+            cursor: pointer;
+
+            &::before {
+                content: "\e930";
+            }
+
+            &:hover {
+                opacity: 1;
+            }
+        }
+
+        &:hover {
+            .toast-dismiss {
+                display: block;
+            }
+        }
+
+        &.show {
+            opacity: 1;
+        }
+    }
+}

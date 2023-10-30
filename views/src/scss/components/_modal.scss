@@ -1,0 +1,41 @@
+#modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background-color: rgba(0, 0, 0, 0.8);
+    padding: 20px;
+    z-index: 900;
+    opacity: 0;
+    transition: all .2s;
+    margin-top: -50px;
+
+    &.open {
+        opacity: 1;
+        margin-top: 0;
+    }
+
+    #modal {
+        position: relative;
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 3px;
+        box-shadow: 0 3px 5px rgba(0, 0, 0, 0.4);
+        width: 100%;
+        max-width: 700px;
+        margin: 0 auto;
+        border: solid 1px #ddd;
+        max-height: 100%;
+        overflow: auto;
+
+        h2 {
+            font-weight: 700;
+            font-size: 1.3em;
+            margin: 0 0 10px 0;
+            padding: 0 30px 20px 0;
+            color: #222;
+            border-bottom: solid 1px #eee;
+        }
+    }
+}
