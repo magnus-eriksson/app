@@ -9,5 +9,5 @@ app()->config->load([
     __DIR__ . '/config.php',
 ]);
 
-app()->addRoute('GET', '/', [Controllers\Home::class, 'home'])
+addRoute('GET', '/', [Controllers\Home::class, 'home'])
     ->setName('home');

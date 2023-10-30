@@ -13,6 +13,6 @@ class Home
      */
     public function home(App $app): string
     {
-        return $app->render('home');
+        return render('home');
     }
 }

@@ -2,7 +2,10 @@
 
 namespace App;
 
+use App\Core\CoreProvider;
+use App\Core\ProviderInterface;
 use Illuminate\Container\Container;
+use InvalidArgumentException;
 use Jsl\Config\Config;
 use Jsl\Config\Contracts\ConfigInterface;
 use Jsl\Database\Connection;
@@ -25,6 +28,12 @@ use Symfony\Component\HttpFoundation\Request;
 class App extends Container
 {
     /**
+     * @var array<ProviderInterface>
+     */
+    protected array $providers = [];
+
+
+    /**
      * @param array $configs
      */
     public function __construct(array $configs = [])
@@ -38,29 +47,26 @@ class App extends Container
         $this->singleton(ConfigInterface::class, fn () => new Config($configs));
         $this->alias(ConfigInterface::class, 'config');
 
-        $this->singleton(Request::class, fn () => Request::createFromGlobals());
-        $this->alias(Request::class, 'request');
+        $this->addProvider(CoreProvider::class);
+    }
 
-        $this->singleton(RouterInterface::class, fn () => (new Router)
-            ->addFixedArguments([$this])
-            ->setClassResolver([$this, 'make']));
-        $this->alias(RouterInterface::class, 'router');
 
-        $this->singleton(Engine::class, function () {
-            $views = new Engine($this->config('templates'));
-            $views->registerFunction('route', [$this->router, 'getNamedRoute']);
-            return $views;
-        });
-        $this->alias(Engine::class, 'views');
+    /**
+     * @param ProviderInterface|string $provider
+     *
+     * @return self
+     */
+    public function addProvider(ProviderInterface|string $provider): self
+    {
+        if (!in_array(ProviderInterface::class, class_implements($provider))) {
+            throw new InvalidArgumentException("Providers must implement " . ProviderInterface::class);
+        }
 
-        $this->singleton(EnsureFactory::class, function (App $app) {
-            return (new EnsureFactory)
-                ->setClassResolver(fn ($class) => $app->make($class));
-        });
-        $this->alias(EnsureFactory::class, 'validator');
+        $provider = is_string($provider) ? $this->make($provider) : $provider;
+        $provider->register($this);
+        $this->providers[] = $provider;
 
-        $this->singleton(Connection::class, fn () => (new ConnectionFactory())->make($this->config('db.connection')));
-        $this->alias(Connection::class, 'db');
+        return $this;
     }
 
 
@@ -73,55 +79,5 @@ class App extends Container
     public function config(string $key, mixed $fallback = null): mixed
     {
         return $this->config->get($key, $fallback);
-    }
-
-
-    /**
-     * @param string $method
-     * @param string $path
-     * @param callable|array $callback
-     *
-     * @return Route
-     */
-    public function addRoute(string $method, string $path, callable|array $callback): Route
-    {
-        return $this->router->addRoute($method, $path, $callback);
-    }
-
-
-    /**
-     * @param string $name
-     * @param array $params
-     *
-     * @return string
-     */
-    public function namedRoute(string $name, array $params = []): string
-    {
-        return $this->router->getNamedRoute($name, $params);
-    }
-
-
-    /**
-     * @param string $location
-     * @param int $responseCode
-     *
-     * @return void
-     */
-    public function redirect(string $location, int $responseCode = 302): void
-    {
-        header("location: {$location}", true, $responseCode);
-        exit;
-    }
-
-
-    /**
-     * @param string $template
-     * @param array $data
-     *
-     * @return string
-     */
-    public function render(string $template, array $data = []): string
-    {
-        return $this->views->render($template, $data);
     }
 }

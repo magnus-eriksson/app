@@ -1,10 +1,14 @@
 <?php
 
 return [
+    /**
+     * Database
+     */
     'db' => [
         'connection' => [
             'driver'    => 'mysql',
             'host'      => 'localhost',
+            'database'  => 'database',
             'username'  => 'username',
             'password'  => 'password',
             'charset'   => 'utf8mb4',
@@ -17,5 +21,11 @@ return [
         ]
     ],
 
-    'templates' => __DIR__ . '/views/templates',
+    /**
+     * Views
+     */
+    'templates' => [
+        'root' => __DIR__ . '/views/templates',
+        'folders' => [],
+    ],
 ];

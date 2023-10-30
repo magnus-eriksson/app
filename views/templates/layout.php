@@ -15,10 +15,10 @@
 
         <header id="app-header">
 
-            <a href="<?= $this->route('home') ?>" class="brand">Brand</a>
+            <a href="<?= route('home') ?>" class="brand">Brand</a>
 
             <nav>
-                <a href="<?= $this->route('home') ?>">Home</a>
+                <a href="<?= route('home') ?>">Home</a>
             </nav>
 
             <nav>
